@@ -1,5 +1,6 @@
 package com.craftinginterpreters.lox;
 
+import java.beans.Statement;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,11 +53,12 @@ public class Lox {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
-
+        List<Stmt> statements = parser.parse();
+        Resolver resolver = new Resolver(interpreter);
+        resolver.resolve(statements);
         if (hadError)
             return;
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     static void error(int line, String message) {
