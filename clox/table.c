@@ -112,7 +112,7 @@ ObjString* tableFindString(Table* table, const char* chars, int length, uint32_t
         Entry* entry = &table->entries[index];
         if (entry->key == NULL) {
             if (IS_NIL(entry->value)) return NULL;
-        } else if (entry->key->length == length && entry->key->hash == hash && memcpy(entry->key->chars, chars, length) == 0) {
+        } else if (entry->key->length == length && entry->key->hash == hash && memcmp(entry->key->chars, chars, length) == 0) {
             return entry->key;
         }
     }
