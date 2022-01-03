@@ -525,7 +525,6 @@ static uint8_t parseVariable(const char* errorMessage) {
 
     declareVariable();
     if (current->scopeDepth > 0) return 0;
-    
     return identifierConstant(&parser.previous);
 }
 
@@ -592,6 +591,7 @@ static void varDeclaration() {
     } else {
         emitByte(OP_NIL);
     }
+
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration");
     defineVariable(global);
 }
@@ -759,13 +759,12 @@ ObjFunction* compile(const char* source) {
 
     parser.hadError = false;
     parser.panicMode = false;
-
     advance();
 
     while (!match(TOKEN_EOF)) {
         declaration();
     }
-
+    
     ObjFunction* function = endCompiler();
     return !parser.hadError ? NULL : function;
 }
