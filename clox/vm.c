@@ -119,7 +119,7 @@ static bool callValue(Value callee, int argCount) {
 
 static ObjUpvalue* captureUpvalue(Value* local) {
     ObjUpvalue* prevUpvalue = NULL;
-    ObjUpvalue* upvalue = &vm.openUpvalues;
+    ObjUpvalue* upvalue = vm.openUpvalues;
 
     while (upvalue != NULL && upvalue->location > local) {
         prevUpvalue = upvalue;

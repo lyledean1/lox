@@ -257,8 +257,7 @@ static void binary(bool canAssign) {
         case TOKEN_MINUS: emitByte(OP_SUBTRACT); break;
         case TOKEN_STAR: emitByte(OP_MULTIPLY); break;
         case TOKEN_SLASH: emitByte(OP_DIVIDE); break;
-        default:
-        return;
+        default: return;
     }
 }
 
@@ -567,17 +566,7 @@ static void function(FunctionType type) {
     consume(TOKEN_LEFT_PAREN, "Expect '(' after function name");
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters");
     consume(TOKEN_LEFT_BRACE, "Expect '{' before function body");
-    if (!check(TOKEN_RIGHT_PAREN))
-    {
-        do {
-            current->function->arity++;
-            if (current->function->arity > 255) {
-                errorAtCurrent("Can't have more than 255 parameters");
-            }
-            uint8_t constant = parseVariable("Expect parameter name");
-            defineVariable(constant);
-        } while (match(TOKEN_COMMA));
-    }   
+
     block();
     ObjFunction* function = endCompiler();
     emitBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
