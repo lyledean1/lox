@@ -2,9 +2,9 @@ fun outer() {
  var x = "outside";
  fun inner() {
    print x;
+   print 1;
  }
  inner();
 }
-
 var closure = outer();
 closure();

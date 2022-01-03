@@ -197,6 +197,7 @@ static InterpretResult run() {
             printValue(*slot);
             printf(" ]");
         }
+        printf("\n");
         disassembleInstruction(&frame->closure->function->chunk, (int)(frame->ip - frame->closure->function->chunk.code));
     #endif
     uint8_t instruction;
@@ -204,6 +205,8 @@ static InterpretResult run() {
         case OP_CONSTANT: {
             Value constant = READ_CONSTANT();
             push(constant);
+            printValue(constant);
+            printf("\n");
             break;
         }
         case OP_NIL: push(NIL_VAL); break;
@@ -365,7 +368,6 @@ static InterpretResult run() {
 InterpretResult interpret(const char* source) {
     ObjFunction* function = compile(source);
     if (function == NULL) return INTERPRET_COMPLILE_ERROR;
-
     push(OBJ_VAL(function));
     ObjClosure* closure = newClosure(function);
     pop();

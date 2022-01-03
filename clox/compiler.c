@@ -350,7 +350,6 @@ static int addUpValue(Compiler* compiler, uint8_t index, bool isLocal) {
 
 static int resolveUpvalue(Compiler* compiler, Token* name) {
     if (compiler->enclosing == NULL) return -1;
-
     int local = resolveLocal(compiler->enclosing, name);
     if (local != -1) {
         compiler->enclosing->locals[local].isCaptured = true;
@@ -562,7 +561,18 @@ static void function(FunctionType type) {
     initCompiler(&compiler, type);
     beginScope();
 
-    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name");
+    consume(TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    if (!check(TOKEN_RIGHT_PAREN)) {
+        do {
+        current->function->arity++;
+        if (current->function->arity > 255) {
+            errorAtCurrent("Can't have more than 255 parameters.");
+        }
+        uint8_t constant = parseVariable("Expect parameter name.");
+        defineVariable(constant);
+        } while (match(TOKEN_COMMA));
+    }
+
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters");
     consume(TOKEN_LEFT_BRACE, "Expect '{' before function body");
 
@@ -570,7 +580,7 @@ static void function(FunctionType type) {
     ObjFunction* function = endCompiler();
     emitBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
 
-    for (int i = 0; i < function -> upvalueCount; i++) {
+    for (int i = 0; i < function->upvalueCount; i++) {
         emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
         emitByte(compiler.upvalues[i].index);
     }
@@ -764,7 +774,7 @@ ObjFunction* compile(const char* source) {
     while (!match(TOKEN_EOF)) {
         declaration();
     }
-    
+
     ObjFunction* function = endCompiler();
     return !parser.hadError ? NULL : function;
 }
