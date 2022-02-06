@@ -98,9 +98,9 @@ static bool call(ObjClosure* closure ,int argCount) {
     }
 
     CallFrame* frame = &vm.frames[vm.frameCount++];
-    frame -> closure = closure;
-    frame -> ip = closure->function->chunk.code;
-    frame -> slots = vm.stackTop - argCount - 1;
+    frame->closure = closure;
+    frame->ip = closure->function->chunk.code;
+    frame->slots = vm.stackTop - argCount - 1;
     return true;
 }
 
@@ -185,7 +185,6 @@ static void concatenate() {
 static InterpretResult run() {
     CallFrame* frame = &vm.frames[vm.frameCount - 1];
 
-
 #define READ_BYTE() (*frame->ip++)
 #define READ_SHORT() \
     (frame->ip += 2, \
@@ -203,6 +202,7 @@ static InterpretResult run() {
       push(valueType(a op b)); \
     } while (false)
 
+
     for (;;) {
     #ifdef DEBUG_TRACE_EXECUTION
         printf("          ");
@@ -215,6 +215,7 @@ static InterpretResult run() {
         disassembleInstruction(&frame->closure->function->chunk, (int)(frame->ip - frame->closure->function->chunk.code));
     #endif
     uint8_t instruction;
+
     switch (instruction = READ_BYTE()) {
         case OP_CONSTANT: {
             Value constant = READ_CONSTANT();
@@ -338,10 +339,11 @@ static InterpretResult run() {
             push(NUMBER_VAL(-AS_NUMBER(pop())));
             break;
         }
-        case OP_PRINT:
+        case OP_PRINT: {
             printValue(pop());
             printf("\n");
             break;
+        }
         case OP_JUMP: {
             uint16_t offset = READ_SHORT();
             frame->ip += offset;
@@ -415,7 +417,8 @@ static InterpretResult run() {
 
 InterpretResult interpret(const char* source) {
     ObjFunction* function = compile(source);
-    if (function == NULL) return INTERPRET_COMPLILE_ERROR;
+    if (function == NULL) return INTERPRET_COMPILE_ERROR;
+
     push(OBJ_VAL(function));
     ObjClosure* closure = newClosure(function);
     pop();

@@ -16,6 +16,7 @@ static void repl() {
             printf("\n");
             break;
         }
+
         interpret(line);
     }
 }
@@ -55,7 +56,7 @@ static void runFile(const char* path) {
     InterpretResult result = interpret(source);
     free(source);
 
-    if (result == INTERPRET_COMPLILE_ERROR) exit(65);
+    if (result == INTERPRET_COMPILE_ERROR) exit(65);
     if (result == INTERPRET_RUNTIME_ERROR) exit(70);
 }
 
