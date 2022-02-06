@@ -17,7 +17,15 @@ static void repl() {
             break;
         }
 
-        interpret(line);
+        // interpret(line);
+        InterpretResult result = interpret(line);
+
+        if (result == INTERPRET_COMPILE_ERROR) {
+            printf("Compile error \n");
+        };
+        if (result == INTERPRET_RUNTIME_ERROR) {
+            printf("Runtime error \n");
+        };
     }
 }
 
