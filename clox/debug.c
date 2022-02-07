@@ -167,6 +167,8 @@ int disassembleInstruction(Chunk* chunk, int offset) {
 //> Calls and Functions disassemble-call
     case OP_CALL:
       return byteInstruction("OP_CALL", chunk, offset);
+    case OP_INVOKE:
+      return invokeInstruction("OP_INVOKE", chunk, offset);
 //< Calls and Functions disassemble-call
 //> Methods and Initializers disassemble-invoke
 //< Superclasses disassemble-super-invoke
