@@ -442,29 +442,6 @@ static Token syntheticToken(const char* text) {
     return token;
 }
 
-static void super_(bool canAssign) {
-    if (currentClass == NULL) {
-        error("Can't use 'super' outside of class");
-    } else if (!currentClass->hasSuperclass) {
-        error("Can't use 'super' in a class with no super class");
-    }
-
-    consume(TOKEN_DOT, "Expect '.' after 'super'.");
-    consume(TOKEN_IDENTIFIER, "Expect superclass method name.");
-    uint8_t name = identifierConstant(&parser.previous);
-
-    namedVariable(syntheticToken("this"), false);
-    if (match(TOKEN_LEFT_PAREN)) {
-        uint8_t argCount = argumentList();
-        namedVariable(syntheticToken("super"), false);
-        emitBytes(OP_SUPER_INVOKE, name);
-        emitByte(argCount);
-    } else {
-        namedVariable(syntheticToken("super"), false);
-        emitBytes(OP_GET_SUPER, name);
-    }
-}
-
 static void this_(bool canAssign) {
     variable(false);
 }
@@ -517,6 +494,29 @@ static void dot(bool canAssign) {
     }
     else {
         emitBytes(OP_GET_PROPERTY, name);
+    }
+}
+
+static void super_(bool canAssign) {
+    if (currentClass == NULL) {
+        error("Can't use 'super' outside of class");
+    } else if (!currentClass->hasSuperclass) {
+        error("Can't use 'super' in a class with no super class");
+    }
+
+    consume(TOKEN_DOT, "Expect '.' after 'super'.");
+    consume(TOKEN_IDENTIFIER, "Expect superclass method name.");
+    uint8_t name = identifierConstant(&parser.previous);
+
+    namedVariable(syntheticToken("this"), false);
+    if (match(TOKEN_LEFT_PAREN)) {
+        uint8_t argCount = argumentList();
+        namedVariable(syntheticToken("super"), false);
+        emitBytes(OP_SUPER_INVOKE, name);
+        emitByte(argCount);
+    } else {
+        namedVariable(syntheticToken("super"), false);
+        emitBytes(OP_GET_SUPER, name);
     }
 }
 

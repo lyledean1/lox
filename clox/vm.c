@@ -118,23 +118,6 @@ static bool invokeFromClass(ObjClass* klass, ObjString* name, int argCount) {
     return call(AS_CLOSURE(method), argCount);
 }
 
-static bool invoke(ObjString* name, int argCount) {
-    Value receiver = peek(argCount);
-
-    if (!IS_INSTANCE(receiver)) {
-        runtimeError("Only instances have methods");
-        return false;
-    }
-
-    ObjInstance* instance = AS_INSTANCE(receiver);
-    Value value;
-    if (tableGet(&instance->fields, name, &value)) {
-        vm.stackTop[-argCount - 1] = value;
-        return callValue(value, argCount);
-    }
-    return invokeFromClass(instance->klass, name, argCount);
-}
-
 static bool callValue(Value callee, int argCount) {
     if (IS_OBJ(callee)) {
         switch (OBJ_TYPE(callee)) {
@@ -170,6 +153,23 @@ static bool callValue(Value callee, int argCount) {
     }
     runtimeError("Can only call functions and classes");
     return false;
+}
+
+static bool invoke(ObjString* name, int argCount) {
+    Value receiver = peek(argCount);
+
+    if (!IS_INSTANCE(receiver)) {
+        runtimeError("Only instances have methods");
+        return false;
+    }
+
+    ObjInstance* instance = AS_INSTANCE(receiver);
+    Value value;
+    if (tableGet(&instance->fields, name, &value)) {
+        vm.stackTop[-argCount - 1] = value;
+        return callValue(value, argCount);
+    }
+    return invokeFromClass(instance->klass, name, argCount);
 }
 
 static bool bindMethod(ObjClass* klass, ObjString* name) {
