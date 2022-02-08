@@ -127,6 +127,10 @@ int disassembleInstruction(Chunk* chunk, int offset) {
 //> Types of Values disassemble-comparison
     case OP_EQUAL:
       return simpleInstruction("OP_EQUAL", offset);
+    case OP_GET_SUPER:
+      return constantInstruction("OP_GET_SUPER", chunk, offset);
+    case OP_SUPER_INVOKE:
+      return invokeInstruction("OP_SUPER_INVOKE", chunk, offset);
     case OP_GREATER:
       return simpleInstruction("OP_GREATER", offset);
     case OP_LESS:
@@ -206,6 +210,8 @@ int disassembleInstruction(Chunk* chunk, int offset) {
       return constantInstruction("OP_CLASS", chunk, offset);
     case OP_METHOD:
       return constantInstruction("OP_METHOD", chunk, offset);
+    case OP_INHERIT:
+      return simpleInstruction("OP_INHERIT", offset);
     default:
       printf("Unknown opcode %d\n", instruction);
       return offset + 1;
