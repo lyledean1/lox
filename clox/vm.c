@@ -479,7 +479,6 @@ static InterpretResult run() {
                 pop();
                 return INTERPRET_OK;
             }
-
             vm.stackTop = frame->slots;
             push(result);
             frame = &vm.frames[vm.frameCount - 1];
